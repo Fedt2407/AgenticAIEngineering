@@ -1,3 +1,4 @@
+# This is the complete app that uses the OpenAI API to answer questions.
 from dotenv import load_dotenv
 from openai import OpenAI
 import json
@@ -9,6 +10,7 @@ import gradio as gr
 
 load_dotenv(override=True)
 
+# This function is used to send a message to the user via Pushover.
 def push(text):
     requests.post(
         "https://api.pushover.net/1/messages.json",
@@ -20,14 +22,17 @@ def push(text):
     )
 
 
+# This function is used to record the user's details.
 def record_user_details(email, name="Name not provided", notes="not provided"):
     push(f"Recording {name} with email {email} and notes {notes}")
     return {"recorded": "ok"}
 
+# This function is used to record the unknown question.
 def record_unknown_question(question):
     push(f"Recording {question}")
     return {"recorded": "ok"}
 
+# This is the JSON schema for the record_user_details tool.
 record_user_details_json = {
     "name": "record_user_details",
     "description": "Use this tool to record that a user is interested in being in touch and provided an email address",
@@ -53,6 +58,7 @@ record_user_details_json = {
     }
 }
 
+# This is the JSON schema for the record_unknown_question tool.
 record_unknown_question_json = {
     "name": "record_unknown_question",
     "description": "Always use this tool to record any question that couldn't be answered as you didn't know the answer",
@@ -69,15 +75,17 @@ record_unknown_question_json = {
     }
 }
 
+# This is the list of tools that the LLM can use.
 tools = [{"type": "function", "function": record_user_details_json},
         {"type": "function", "function": record_unknown_question_json}]
 
 
+# This is the class that represents the agent.
 class Me:
 
     def __init__(self):
         self.openai = OpenAI()
-        self.name = "Ed Donner"
+        self.name = "Federico Tognetti"
         reader = PdfReader("me/linkedin.pdf")
         self.linkedin = ""
         for page in reader.pages:
