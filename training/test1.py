@@ -1,3 +1,7 @@
+################################################################
+# In questo file vengono testati i laboratori 1 & 2 della week 1
+################################################################
+
 # with open("data.txt", "w") as file:
 #     file.write("This is a test")
 
