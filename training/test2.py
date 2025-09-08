@@ -51,6 +51,7 @@ Ti vengono forniti un riassunto del background di {name} e il suo profilo Linked
 Sii professionale e coinvolgente, come se stessi parlando con un potenziale cliente o futuro datore di lavoro che ha visitato il sito web. \
 Se non conosci la risposta, dillo."
 
+# Aggiungiamo info aggiuntive (in un sistema complesso sarebbero potute essere aggiunte in un secondo momento in modo automatico)
 system_prompt += f"\n\n## Riassunto:\n{personal_summary}\n\n## Profilo LinkedIn:\n{linkedin_pdf_text}\n\n"
 system_prompt += f"Con questo contesto, per favore chatta con l'utente, rimanendo sempre nel personaggio di {name}."
 
@@ -80,7 +81,7 @@ system_prompt += f"Con questo contesto, per favore chatta con l'utente, rimanend
 #     """
 
 #     messages = [{
-#         "role": "user",
+#         "role": "system",
 #         "content": system_prompt
 #     }] + history + [{
 #         "role": "user",
@@ -94,13 +95,13 @@ system_prompt += f"Con questo contesto, per favore chatta con l'utente, rimanend
     
 #     return response.choices[0].message.content
 
-# # Lancia l'interfaccia di gradio NOTA: è necessario specificare il parametro share=True in launch()
+# # Lancia l'interfaccia di gradio NOTA: è necessario specificare il parametro share=True in launch() per visualizzare Gradio sul browser
 # gr.ChatInterface(chat, type="messages").launch(share=True)
 
 
-####################################################################
-# In questa sezione viene definito LLM che effettuerà la valutazione
-####################################################################
+######################################################################
+# In questa sezione viene definito l'LLM che effettuerà la valutazione
+######################################################################
 
 # Impostiamo lo schema Pydantic di Python per definire la tipologia di output ammmesso
 from pydantic import BaseModel
@@ -110,7 +111,7 @@ class Evaluation(BaseModel):
     is_acceptable: bool
     feedback: str
 
-# Definiamo il prompt per la valutazione
+# Definiamo il prompt per la valutazione che verrà utilizzato succesivamente nella funzione evaluate()
 evaluator_system_prompt = f"Sei un valutatore che decide se una risposta a una domanda è accettabile. \
 Ti viene fornita una conversazione tra un Utente e un Agente. Il tuo compito è decidere se l'ultima risposta dell'Agente è di qualità accettabile. \
 L'Agente sta interpretando il ruolo di {name} e sta rappresentando {name} sul loro sito web. \
@@ -120,7 +121,7 @@ All'Agente sono state fornite informazioni su {name} sotto forma di riepilogo e 
 evaluator_system_prompt += f"\n\n## Riepilogo:\n{personal_summary}\n\n## Profilo LinkedIn:\n{linkedin_pdf_text}\n\n"
 evaluator_system_prompt += f"Con questo contesto, per favore valuta l'ultima risposta, indicando se la risposta è accettabile e fornendo il tuo feedback."
 
-# Definiamo il prompt per la valutazione
+# Genera un prompt strutturato per il valutatore che include la cronologia della chat, l'ultimo messaggio e la risposta da valutare
 def evaluator_user_prompt(reply, message, history):
     """Genera il prompt per la valutazione della conversazione tra utente e agente.
 
@@ -143,7 +144,7 @@ def evaluator_user_prompt(reply, message, history):
     user_prompt += "Per favore valuta la risposta, indicando se è accettabile e fornendo il tuo feedback."
     return user_prompt
 
-# Definiamo il modello OpenAI per la valutazione
+# Definiamo il modello OpenAI per la valutazione (scegliamo un modello diverso da quello che ha generato la risposta)
 openai_api_key = os.getenv("OPENAI_API_KEY")
 openai = OpenAI(api_key=openai_api_key)
 openai_model = "gpt-4o-mini"
@@ -172,6 +173,8 @@ def evaluate(reply, message, history) -> Evaluation:
         - Soddisfa gli standard qualitativi attesi per un'interazione sul sito web
     """
 
+    # Forniamo all'LLM sia le istruzioni (evaluator_system_prompt) che il contesto della conversazione (evaluator_user_prompt)
+    # Quest'ultimo continere reply (ultima risposta dell'LLM), message (ultimo messaggio inserito dall'utente) e history (lo storico della conversazione)
     messages = [{
         "role": "system",
         "content": evaluator_system_prompt
@@ -186,15 +189,15 @@ def evaluate(reply, message, history) -> Evaluation:
     response = openai.beta.chat.completions.parse(
         model=openai_model,
         messages=messages,
-        response_format=Evaluation
+        response_format=Evaluation # questo parametro permette di convertire la risposta JSON dell'LLM nel formato richiesto dalla classe Pydantic Evaluate
     )
 
     return response.choices[0].message.parsed
 
 
-#########################################
-# Definiamo gli altri messaggi della chat
-#########################################
+################################################################################################
+# Definiamo un messaggio specifico (possiedi un brevetto?) per testare il sistema di valutazione
+################################################################################################
 
 messages = [{
     "role": "system",
@@ -210,8 +213,7 @@ response = deepseek.chat.completions.create(
 reply = response.choices[0].message.content
 
 # Questa funzione permetterà di valutare l'output dell'LLM
-# Passiamo solo il primo messaggio (messages[:1]) che contiene il system prompt,
-# escludendo la domanda dell'utente che è già inclusa come secondo parametro
+# Passiamo solo la risposta dell'LLM, la domanda (hardcoded) e il primo messaggio (messages[:1]) invece dell'intera history
 evaluate(reply, "Possiedi un brevetto?", messages[:1])
 
 
@@ -222,7 +224,6 @@ evaluate(reply, "Possiedi un brevetto?", messages[:1])
 def rerun(reply, message, history, feedback):
     """
     Genera una nuova risposta dall'LLM quando la precedente non ha superato la validazione.
-
     Questa funzione aggiorna il prompt di sistema con informazioni sulla risposta rifiutata
     e il relativo feedback, per poi richiedere una nuova risposta all'LLM che tenga conto
     di questi elementi.
@@ -238,7 +239,9 @@ def rerun(reply, message, history, feedback):
     """
     updated_system_prompt = system_prompt + "\n## la precedente risposta è stata rifiutata\nhai tentato di rispondere ma il contollo di qualità ha rifiutato la risposta\n\n"
     updated_system_prompt += f"Il tuo tentativo di risposta: {reply}\n\n"
-    updated_system_prompt += f"Il motivo per il rifiuto della risposta {feedback}\n\n"
+    updated_system_prompt += f"Il motivo per il rifiuto della risposta: {feedback}\n\n"
+
+    # Definiamo il messaggio per l'LLM che contiene il messaggio di sistema aggiornato, lo storico ed il messaggio dell'utente
     messages = [{
         "role": "system",
         "content": updated_system_prompt
@@ -281,16 +284,25 @@ def chat(message, history):
     )
     reply = response.choices[0].message.content
 
-    # Valuatiamo la bontà della risposta
+    # Utilizziamo la funzione evalute per valutare la risposta (reply)
+    # NOTA: la funzione evaluate() restituisce un oggetto Pydantic con i parametri is_acceptable (bool) e feedback (str)
     evaluation = evaluate(reply, message, history)
+    # print(f"Questa è la mia valutazione: {evaluation}")
 
     # Definiamo l'accettabilità della risposta accedendo alla propietà is_acceptable della funzione evaluate()
     if evaluation.is_acceptable:
         print("Valutazione superata, inoltro la risposta")
     else:
         print(f"Valutazione non superata con il seguente feedback\n{evaluation.feedback}")
+        # Lanciamo la funzione rerun() fornendo la risposta data precedentemente ed il feedback
         reply = rerun(reply, message, history, evaluation.feedback)
     return reply
     
-# # Lancia l'interfaccia di gradio NOTA: è necessario specificare il parametro share=True in launch()
+# Lancia l'interfaccia di gradio NOTA: è necessario specificare il parametro share=True in launch() per visualizzare Gradio sul browser
+# NOTA: Gradio prende come argomenti la funzione e type come parametri principali
+# NOTA: type="messages" indica che viene forninito il formato openai:
+# messages = [{
+#         "role": "...",
+#         "content": "..."
+#     }]
 gr.ChatInterface(chat, type="messages").launch(share=True)
