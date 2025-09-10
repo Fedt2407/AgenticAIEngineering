@@ -2,6 +2,8 @@
 # In questo file viene terstato il laboratorio 3 della week 1
 #############################################################
 
+# NOTA: verrà fatta una demo funzionante per il progetto Domus Revita
+
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -24,36 +26,36 @@ deepseek_model = "deepseek-chat"
 deepseek = OpenAI(api_key=deepseek_api_key, base_url=DEEPSEEK_BASE_URL)
 
 # Definiamo il lettore di PDF
-reader = PdfReader("../1_foundations/me/linkedin.pdf")
+reader = PdfReader("../1_foundations/me/Domus_Revita_Brief.pdf")
 
 # Estrtaimo il testo dal PDF
-linkedin_pdf_text = ""
+presentation_brief = ""
 for page in reader.pages:
     text = page.extract_text()
     if text:
-        linkedin_pdf_text += text
+        presentation_brief += text
 
-# print(linkedin_pdf_text)
+# print(presentation_brief)
 
 # Leggiamo il testo me.txt nella stessa cartella del pdf
-with open("../1_foundations/me/summary.txt", "r", encoding="utf-8") as file:
-    personal_summary = file.read()
+with open("../1_foundations/me/domus-revita.txt", "r", encoding="utf-8") as file:
+    busness_model_description = file.read()
 
-# print(personal_summary)
+# print(busness_model_description)
 
 # Definiamo il promt di sistema
-name = "Federico Tognetti"
+name = "Domus Revita"
 
-system_prompt = f"Tu stai agendo come {name}. Stai rispondendo a domande sul sito web di {name}, \
-in particolare domande relative alla carriera, background, competenze ed esperienza di {name}. \
+system_prompt = f"Tu stai agendo come {name}. Stai rispondendo a domande sul sito web di {name}, società che offre servizi di riqualificazione imobiliare \
+in particolare domande relative alla tipologia di intervento di ruqualificazione immobiliare, alle modalità ed alle tempistiche del servizio fornito da {name}. \
 La tua responsabilità è rappresentare {name} nelle interazioni sul sito web nel modo più fedele possibile. \
-Ti vengono forniti un riassunto del background di {name} e il suo profilo LinkedIn che puoi utilizzare per rispondere alle domande. \
-Sii professionale e coinvolgente, come se stessi parlando con un potenziale cliente o futuro datore di lavoro che ha visitato il sito web. \
+Ti vengono forniti un riassunto del modello di business di {name} estratto da una presentazione sintetica che puoi utilizzare per rispondere alle domande. \
+Sii professionale e coinvolgente, come se stessi parlando con un potenziale cliente per invogliarlo ad approfondire e chidere un contatto ai nostri esperti. \
 Se non conosci la risposta, dillo."
 
 # Aggiungiamo info aggiuntive (in un sistema complesso sarebbero potute essere aggiunte in un secondo momento in modo automatico)
-system_prompt += f"\n\n## Riassunto:\n{personal_summary}\n\n## Profilo LinkedIn:\n{linkedin_pdf_text}\n\n"
-system_prompt += f"Con questo contesto, per favore chatta con l'utente, rimanendo sempre nel personaggio di {name}."
+system_prompt += f"\n\n## Riassunto:\n{busness_model_description}\n\n## Presentazione sintetica:\n{presentation_brief}\n\n"
+system_prompt += f"Con questo contesto, per favore chatta con l'utente, rimanendo sempre nel personaggio di operatore commmerciale di {name}."
 
 # print(system_prompt)
 
@@ -115,10 +117,10 @@ class Evaluation(BaseModel):
 evaluator_system_prompt = f"Sei un valutatore che decide se una risposta a una domanda è accettabile. \
 Ti viene fornita una conversazione tra un Utente e un Agente. Il tuo compito è decidere se l'ultima risposta dell'Agente è di qualità accettabile. \
 L'Agente sta interpretando il ruolo di {name} e sta rappresentando {name} sul loro sito web. \
-All'Agente è stato indicato di essere professionale e coinvolgente, come se stesse parlando con un potenziale cliente o futuro datore di lavoro che ha visitato il sito web. \
+All'Agente è stato indicato di essere professionale e coinvolgente, come se stesse parlando con un potenziale cliente che ha visitato il sito web. \
 All'Agente sono state fornite informazioni su {name} sotto forma di riepilogo e dettagli LinkedIn. Ecco le informazioni:"
 
-evaluator_system_prompt += f"\n\n## Riepilogo:\n{personal_summary}\n\n## Profilo LinkedIn:\n{linkedin_pdf_text}\n\n"
+evaluator_system_prompt += f"\n\n## Riepilogo:\n{busness_model_description}\n\n## Profilo LinkedIn:\n{presentation_brief}\n\n"
 evaluator_system_prompt += f"Con questo contesto, per favore valuta l'ultima risposta, indicando se la risposta è accettabile e fornendo il tuo feedback."
 
 # Genera un prompt strutturato per il valutatore che include la cronologia della chat, l'ultimo messaggio e la risposta da valutare
