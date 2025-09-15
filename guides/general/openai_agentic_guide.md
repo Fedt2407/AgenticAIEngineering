@@ -44,6 +44,7 @@ load_dotenv()
 client = OpenAI(
     api_key=os.getenv("OPENAI_API_KEY")  # Specifica esplicitamente se necessario
 )
+# NOTA: è possibile usare LLM diversi da OpenAI come DeepSeek, Anthropic, Gemini, Grok, Ollama, ecc.
 
 # Verifica della connessione
 try:
