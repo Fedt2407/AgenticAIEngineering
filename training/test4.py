@@ -1,6 +1,6 @@
-###############################################################
-# In questo file viene terstato i laboratori 1 & 2 della week 2
-###############################################################
+##############################################################
+# In questo file viene testato i laboratori 1 & 2 della week 2
+##############################################################
 
 # In questa sezione verranno applicati gli SDK di OpenAI per creare chimate più efficaci agli LLM
 # Utilizzeremo la libreria agents
