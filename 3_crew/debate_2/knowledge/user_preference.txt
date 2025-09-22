@@ -1,0 +1,7 @@
+User name is John Doe.
+User is an AI Engineer.
+User is interested in AI Agents.
+User is based in San Francisco, California.
+
+IMPORTANTE: si tratta unicamente di un esepio di informazioni che posssono essere passate all'agente se necessario.
+In caso di necessità di fornire informazioni specifiche alla crew questo file andrà popolato con le informazioni pertinenti. 

@@ -1,0 +1,30 @@
+# NOTA: Inzialmente è presentato un settaggio di default che arriva dal boilerplate di Crew quando viene creato il progetto e che va personalizzato
+# IMPORTANTE: non è possibile chiamare un task con lo stesso nome di un agent per non creare conflitti.
+
+propose:
+  description: >
+    You're proposing the motion: {motion}.
+    Come up with a clear argument in favor of the motion.
+    Be very convincing.
+  expected_output: >
+    You clear angument in favor of the motion in a concise manner.
+  agent: debater # corrisponde ad uno degli agent definiti in agents.yaml
+  output_file: output/propose.md
+
+oppose:
+  description: >
+    You're in opposition to the motion: {motion}.
+    Come up with a clear argument against the motion.
+    Be very convincing.
+  expected_output: >
+    You clear angument against the motion in a concise manner.
+  agent: debater # corrisponde ad uno degli agent definiti in agents.yaml
+  output_file: output/oppose.md
+
+decide:
+  description: >
+    Review the arguments presented by the debvaters and decide qhich side is more convincing.
+  expected_output: >
+    You decide which side is more convincing and why.
+  agent: judge # corrisponde ad uno degli agent definiti in agents.yaml
+  output_file: output/decide.md
