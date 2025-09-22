@@ -193,7 +193,7 @@ html_tool = html_converter.as_tool(
 # Facciamo la lista dei tool per la gestione della mail
 email_tools = [subject_tool, html_tool, send_html_email]
 
-# Creaimo l'handoff che si occuperà di crearte l'ggetto convertire il corpo del testo e spedire la mail
+# Creaimo l'handoff che si occuperà di crearte l'oggetto e convertire il corpo del testo e spedire la mail
 instructions = (
     "Sei esperto nel creare l'oggetto, formattare il corpo e spedire le email. Ricevi il corpo di una email da inviare."
     "Prima utilizzi il tool subject_writer per scrivere l'oggetto dell'email, poi utilizzi il tool html_converter per convertire il corpo in HTML."
@@ -221,13 +221,13 @@ Segui attentamente questi passaggi:
 1. Genera le Bozze: Utilizza tutti e tre i tools sales_agent per generare tre diverse bozze di email. Non procedere finché non hai tutte e tre le bozze pronte.
 
 2. Valuta e Seleziona: Esamina le bozze e scegli la singola email migliore basandoti sul tuo giudizio di quale sia la più efficace.
-Puoi utilizzare i tools massimo 3 volte se non sei soddisfatto dei risultati del primo tentativo.
+Puoi utilizzare i tools massimo 2 volte se non sei soddisfatto dei risultati del primo tentativo.
 
 3. Passaggio per l'Invio: Passa SOLO la bozza vincente all'agente 'Emailer agent'. L'Emailer agent si occuperà della formattazione e dell'invio.
 
 Regole Fondamentali:
-- Devi utilizzare i tools sales agent per generare le bozze — non scriverle tu stesso e mantieni la lingua italiana.
-- Devi passare esattamente UNA email all'Emailer agent — mai più di una.
+- Devi utilizzare i tools sales agent massimo 2 volte per generare le bozze — non scrivere le bozze tu stesso e mantieni la lingua italiana.
+- Devi passare esattamente 1 email all'Emailer agent — mai più di una.
 - Una volta passato il controllo all'Emailer agent, NON richiamarlo nuovamente.
 """
 
@@ -338,7 +338,7 @@ async def send_formatted_mail_with_guardrail():
         input_guardrails=[guardrail_against_name]
     )
 
-    # NOTA: questo messaggio di input da parte dell'utente attiverrà il guardrail e bloccherà il processo procendo un errore nel terminale
+    # NOTA: questo messaggio di input da parte dell'utente attiverrà il guardrail e bloccherà il processo producendo un errore nel terminale
     # message = "Manda una mail di vendita a freddo al potenziale cliente da parte di Alice"
 
     # NOTA: questo messaggio di input supererà il guardrail con una prosecuzione del processo
@@ -348,4 +348,20 @@ async def send_formatted_mail_with_guardrail():
         result = await Runner.run(careful_sales_manager, message)
         print(result.final_output)
 
-asyncio.run(send_formatted_mail_with_guardrail()) # Decommenta per eseguire
+asyncio.run(send_formatted_mail_with_guardrail())
+
+####################################################################
+# Funzione generale per l'esecuzione del codice dell'utlima funzione
+# IMPORTANTE: con il seguente codice il corpo della mail arriva completamente nero
+
+# async def main():
+#     try:
+#         print("Processo di generazione mail avviato")
+#         result = await send_formatted_mail_with_guardrail()
+#         return result
+#     except Exception as e:
+#         print(f"Errore nell'esecuzione: {e}")
+#         return None
+
+# if __name__ == "__main__":
+#     asyncio.run(main())
