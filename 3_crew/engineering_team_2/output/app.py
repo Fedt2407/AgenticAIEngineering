@@ -30,6 +30,10 @@ def deposit_funds(amount):
     
     try:
         amount = float(amount)
+        # The deposit() method is defined in the Account class in accounts.py
+        # It adds the specified amount to the account balance
+        # It takes a float parameter 'amount' representing the money to deposit
+        # The method will raise an exception if amount is negative or zero
         account.deposit(amount)
         return "Deposit successful", get_account_info(), get_holdings(), get_profit_loss(), get_transactions()
     except Exception as e:
