@@ -29,7 +29,11 @@ class EvaluatorOutput(BaseModel):
     success_criteria_met: bool = Field(description="Whether the success criteria have been met")
     user_input_needed: bool = Field(description="True if more input is needed from the user, or clarifications, or the assistant is stuck")
 
-
+# Questa è la classe principale dell'applicazione
+# IMPORTANTE: quando inizializziamo la classe l'operazione deve essere istantanea e non asincrona
+# Tuttavia poi c'è bisogno di gestire le funzionalità asincrone dell'applicazione
+# Per questo dopo aver fatto l'inizializzazione della classe si fa un setup successivo dei componenti asincroni:
+# es. PlayWright, gli altri tools e la costruzione del grafico
 class Sidekick:
     def __init__(self):
         self.worker_llm_with_tools = None
@@ -51,6 +55,11 @@ class Sidekick:
         self.evaluator_llm_with_output = evaluator_llm.with_structured_output(EvaluatorOutput)
         await self.build_graph()
 
+    # Qui viene creato il nodo del worker.
+    # IMPORTANTE: quando una informazione che può variare (es. la data corrente) è necessaria nel prompt
+    # NON ha senso creare un tool per la data e ora per poi richiamarlo in ogni prompt ed insistere perché il tool venga usato ogni volta.
+    # È molto più sensato richiamare la data e ora direttamente nel prompt
+    # NOTA: nel linguaggio di MCP questa (data e ora) verrebbe definita una risorsa
     def worker(self, state: State) -> Dict[str, Any]:
         system_message = f"""You are a helpful assistant that can use tools to complete tasks.
     You keep working on a task until either you have a question or clarification for the user, or the success criteria is met.
