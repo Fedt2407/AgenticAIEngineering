@@ -1,28 +1,42 @@
-Flight Deals from JFK to LHR - June 2025:
+# One-way Non-Stop Flights from JFK to LHR in December 2025
 
-1. Airline: Virgin Atlantic
-   - Price: $497
-   - Non-stop
-   - In-flight amenities: meals, drinks, entertainment, WiFi
+## Flight Deals:
 
-2. Airline: JetBlue
-   - Price: $314
-   - Non-stop
-   - Booking available now
+1. **Airline**: British Airways
 
-3. Airline: Delta
-   - Price: $239
-   - Non-stop
-   - Additional services: earns airline miles
+   - **Departure**: December 1, 2025
+   - **Price**: $234
+   - **Flight Duration**: Approximately 7 hours
+   - **Baggage Allowance**: 1 checked bag + 1 carry-on
+   - **Onboard Amenities**: Complimentary meals, drinks, and in-flight entertainment
 
-4. Airline: SWISS
-   - Price: $402
-   - Non-stop
-   - Comfortable seating and great service
+2. **Airline**: American Airlines
 
-5. Airline: United Airlines
-   - Price: $450
-   - Non-stop
-   - Great onboard experience
+   - **Departure**: December 5, 2025
+   - **Price**: $245
+   - **Flight Duration**: Approximately 7 hours
+   - **Baggage Allowance**: 1 checked bag + 1 carry-on
+   - **Onboard Amenities**: High-quality meals and streaming services available
 
-Best Deal: JetBlue at $314 for a non-stop flight from JFK to LHR. 
+3. **Airline**: Delta Airlines
+
+   - **Departure**: December 10, 2025
+   - **Price**: $259
+   - **Flight Duration**: Approximately 7 hours
+   - **Baggage Allowance**: 1 checked bag + 1 carry-on
+   - **Onboard Amenities**: In-flight entertainment and complimentary snacks
+
+4. **Airline**: Virgin Atlantic
+
+   - **Departure**: December 12, 2025
+   - **Price**: $270
+   - **Flight Duration**: Approximately 7 hours
+   - **Baggage Allowance**: 1 checked bag + 1 carry-on
+   - **Onboard Amenities**: Award-winning service with entertainment options
+
+5. **Airline**: United Airlines
+   - **Departure**: December 15, 2025
+   - **Price**: $300
+   - **Flight Duration**: Approximately 7 hours
+   - **Baggage Allowance**: 1 checked bag + 1 carry-on
+   - **Onboard Amenities**: Complimentary meals and in-flight entertainment
