@@ -1,3 +1,7 @@
+###############################################################################
+# THIS IS A TEMPLATE CODE THAT COULD BE CHANGED BY OUR AGENT DURING THE PROJECT
+###############################################################################
+
 from autogen_core import MessageContext, RoutedAgent, message_handler
 from autogen_agentchat.agents import AssistantAgent
 from autogen_agentchat.messages import TextMessage
@@ -37,6 +41,7 @@ class Agent(RoutedAgent):
         text_message = TextMessage(content=message.content, source="user")
         response = await self._delegate.on_messages([text_message], ctx.cancellation_token)
         idea = response.chat_message.content
+        # In case the random number is below 0.5 we use the utility function find_recipient() to ask refining our business idea anb return it back
         if random.random() < self.CHANCES_THAT_I_BOUNCE_IDEA_OFF_ANOTHER:
             recipient = messages.find_recipient()
             message = f"Here is my business idea. It may not be your speciality, but please refine it and make it better. {idea}"
