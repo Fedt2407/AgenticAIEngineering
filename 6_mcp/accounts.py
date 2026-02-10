@@ -33,6 +33,9 @@ class Account(BaseModel):
     transactions: list[Transaction]
     portfolio_value_time_series: list[tuple[str, float]]
 
+    # The @classmethod decorator indicates that this method receives the class (cls) as its first argument,
+    # rather than an instance of the class. This allows the method to create or interact with class-level data,
+    # and is typically used for alternative constructors or factory methods.
     @classmethod
     def get(cls, name: str):
         fields = read_account(name.lower())
